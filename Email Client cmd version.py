@@ -123,7 +123,6 @@ def view_receivedmail(receiver):
     mycursor.execute(sql7)
 
     mail_no = mycursor.fetchall()
-    count = 0
     for d in mail_no:
         sql8 = 'SELECT Mail_message FROM Email_Client_Messages WHERE Mail_no =%s'
         mycursor.execute(sql8,d)
