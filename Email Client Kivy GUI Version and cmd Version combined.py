@@ -4,9 +4,9 @@ from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager,Screen
 from kivymd.uix.list import ThreeLineListItem
 import mysql.connector
-import hashlib
+import hashlib                                                      
 
-
+                                                        #This guidesign string includes all elements of each screen
 guidesign = """
 ScreenManager:
     Login_page:
@@ -300,7 +300,7 @@ ScreenManager:
 """
 
 
-class cmdversion():
+class cmdversion():                                             #1st email client version code modified
     email = ''
     password = ''
     def database():
@@ -465,9 +465,9 @@ class cmdversion():
 
 
 
-cmd = cmdversion()
+cmd = cmdversion()                                          #creates a instace of cmdversion class
 
-class Login_page(Screen):
+class Login_page(Screen):                                           #each class is created to control each screens
     email = ObjectProperty(None)
     password = ObjectProperty(None)
     def validate(self):
@@ -527,17 +527,19 @@ class Sent_mail_page(Screen):
 class screenmanage(ScreenManager):
     pass
 
-class EmailClientApp(MDApp):
-    def build(self):
+
+class EmailClientApp(MDApp):                                        #Extends the prebuilt MDApp class 
+    def build(self):                                                #Builds the gui
         self.theme_cls.primary_palette = 'Cyan'
+        sm = ScreenManager()                                                #creates a instance of screen manager to switch between screens
         sm.add_widget(Login_page(name = 'loginpage'))
         sm.add_widget(Register_page(name= 'registerpage'))
         sm.add_widget(User_page(name = 'userpage'))
         sm.add_widget(Send_mail_page(name = 'sendmailpage'))
         sm.add_widget(Received_mail_page(name = 'receivedmailpage'))
-        sm.add_widget(Sent_mail_page(name = 'sentmailpage'))
-        screengui = Builder.load_string(guidesign)
-        return screengui
+        sm.add_widget(Sent_mail_page(name = 'sentmailpage'))                        #adds all screens
+        screengui = Builder.load_string(guidesign)                                  #loads the instructions and elements of each screen
+        return screengui                                                                
 
-sm = ScreenManager()
-EmailClientApp().run()
+
+EmailClientApp().run()              #program stars here

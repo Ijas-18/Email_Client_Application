@@ -3,7 +3,7 @@ import hashlib
 import getpass
 
 
-def database():
+def database():             #function to connect to database using mysql connector
     try:
         global mydb
         mydb = mysql.connector.connect(host="remotemysql.com",
@@ -16,7 +16,7 @@ def database():
         return 0
 
 
-def storecredentials(email,password):
+def storecredentials(email,password):       #function to store new user credentials in database
     try:
         sql = "INSERT INTO Email_Client_User_Database(Email,password) VALUES (%s,%s)"
         val = (email,password)
@@ -37,7 +37,7 @@ def storecredentials(email,password):
 
 
 
-def validatecredentials(email,password):
+def validatecredentials(email,password):            #function to check whether user name and password entered with database
     sql = "SELECT Email, Password FROM Email_Client_User_Database WHERE Email = %s and Password = %s"
     emps = (email, password)
     mycursor.execute(sql,emps)
@@ -50,7 +50,7 @@ def validatecredentials(email,password):
 
 
 
-def user(email,user_name):
+def user(email,user_name):                      #this function is entered when user details are correct
     print("\n\t  Hii %s Glad to see you login  "%(user_name))
     while(1):
         try:
@@ -78,7 +78,7 @@ def user(email,user_name):
             print("\n An Error has been occured \n")
             
 
-def sendmail(sender):
+def sendmail(sender):                           #function to send mail 
     sender = asterik_to_underscore(sender)
     sender = sender.split(".com")
     receiver = input("Enter receipient Email:")
@@ -89,22 +89,22 @@ def sendmail(sender):
     sub_mssg = "From:%s   To:%s   Subject:%s   Message:%s"%(sender[0],receiver[0],subject,message)
     
     hash_message = sender[0]+receiver[0]+subject+message
-    hash_encode = hashlib.sha256(hash_message.encode())
-    message_no = hash_encode.hexdigest()
+    hash_encode = hashlib.sha256(hash_message.encode())                     #creates a sha256 hash to represent message no
+    message_no = hash_encode.hexdigest()        
     
-    sql3 = "INSERT INTO Email_Client_Messages(Mail_no,Mail_message) VALUES (%s,%s)"
+    sql3 = "INSERT INTO Email_Client_Messages(Mail_no,Mail_message) VALUES (%s,%s)"         #inserts message and message no in message table
     val3 = (message_no,sub_mssg)
     mycursor.execute(sql3,val3)
     mydb.commit()
 
-    sql5_un = 'INSERT INTO Email_Client_Senders(%s)'%(sender[0])
+    sql5_un = 'INSERT INTO Email_Client_Senders(%s)'%(sender[0])                            #inserts message no in senders table
     sql5 = sql5_un+' VALUES (%s)'
     val5 = (message_no,)
     mycursor.execute(sql5,val5)
     mydb.commit()
 
 
-    sql6_un = 'INSERT INTO Email_Client_Receivers(%s)'%(receiver[0])
+    sql6_un = 'INSERT INTO Email_Client_Receivers(%s)'%(receiver[0])                        #inserts messsage no in receivers table
     sql6 = sql6_un+' VALUES (%s)'
     val6 = (message_no,)
     mycursor.execute(sql6,val6)
@@ -115,39 +115,39 @@ def sendmail(sender):
 
 
 
-def view_receivedmail(receiver):
+def view_receivedmail(receiver):                                #function to view received mail
     print("The received mails are:")
     receiver = asterik_to_underscore(receiver)
     receiver = receiver.split(".com")
-    sql7 = "SELECT %s FROM Email_Client_Receivers"%(receiver[0])
+    sql7 = "SELECT %s FROM Email_Client_Receivers"%(receiver[0])            #takes message no's from receivers table
     mycursor.execute(sql7)
 
     mail_no = mycursor.fetchall()
     for d in mail_no:
-        sql8 = 'SELECT Mail_message FROM Email_Client_Messages WHERE Mail_no =%s'
+        sql8 = 'SELECT Mail_message FROM Email_Client_Messages WHERE Mail_no =%s'       #takes messages from message tabel using messge no's
         mycursor.execute(sql8,d)
         message = mycursor.fetchall()
         try:
             real_message = message[0][0].rsplit('   ')
-            print("\n" +underscore_to_asterik(real_message[0]) +".com\n" +real_message[2])
+            print("\n" +underscore_to_asterik(real_message[0]) +".com\n" +real_message[2])      
             for m in range(3,len(real_message)):
                 print(real_message[m],end=' ')
-            print("\n\n")
+            print("\n\n")                                                               #aligns and prints the message on screen
         except IndexError:
             pass
        
 
-def view_sentmail(sender):
+def view_sentmail(sender):                          #function to view sent mails
     print("The sent mails are:")
     sender = asterik_to_underscore(sender)
     sender = sender.split(".com")
-    sql8 = "SELECT %s FROM Email_Client_Senders"%(sender[0])
+    sql8 = "SELECT %s FROM Email_Client_Senders"%(sender[0])            #takes message no's from senders table
     mycursor.execute(sql8)
 
     mail_no = mycursor.fetchall()
     count = 0
     for h in mail_no:
-        sql9 = 'SELECT Mail_message FROM Email_Client_Messages WHERE Mail_no =%s'
+        sql9 = 'SELECT Mail_message FROM Email_Client_Messages WHERE Mail_no =%s'       #takes messages from message table
         mycursor.execute(sql9,h)
         message = mycursor.fetchall()
         try:
@@ -155,19 +155,19 @@ def view_sentmail(sender):
             print("\n" +underscore_to_asterik(real_message[1])+".com \n" +real_message[2])
             for n in range(3,len(real_message)):
                 print(real_message[n],end=' ')
-            print("\n\n")
+            print("\n\n")                                                            #aligns and prints the message on screen
         except IndexError:
             pass
         
         
 
     
-def asterik_to_underscore(j):
+def asterik_to_underscore(j):                           #function to convert @ to _ because   @ is not being accepted in sql execute statement
     name = j.rsplit("@")
     name = name[0]+'_'+name[1]
     return name
 
-def underscore_to_asterik(u):
+def underscore_to_asterik(u):                           #function to convert _ to @ 
     name = u.rsplit("_")
     name = name[0]+'@'+name[1]
     return name
@@ -177,11 +177,11 @@ def underscore_to_asterik(u):
 
 
     
-print("\n\t Hii There Welcome to Email Client \n")
+print("\n\t Hii There Welcome to Email Client \n")          #program starts
 
 while(1):
-    if(database()==1):
-        mycursor = mydb.cursor()
+    if(database()==1):                                      #connects to database
+        mycursor = mydb.cursor()                            #creates cursor
         pass
     else:
         break
