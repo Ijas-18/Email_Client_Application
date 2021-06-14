@@ -1,0 +1,23 @@
+Table: 
+Email_Client_User_Database
+Columns:
+  ID int(11) AI PK 
+  Email varchar(45) 
+  Password varchar(10
+
+Table: 
+Email_Client_Messages
+Columns:
+  ID int(11) AI PK 
+  Mail_no text 
+  Mail_message text
+
+Table: 
+Email_Client_Receivers
+Columns:
+  ID int(11) AI PK
+
+Table:
+Email_Client_Senders
+Columns:
+  ID int(11) AI PK
